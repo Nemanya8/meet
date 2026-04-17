@@ -45,6 +45,7 @@ export class CallsProvider {
   private ICE_BATCH_INTERVAL = 200
   private pendingCandidates = new Map<string, IceCandidateEntry[]>()
   private iceBatchTimers = new Map<string, ReturnType<typeof setTimeout>>()
+  private pendingAnswers = new Map<string, Promise<boolean>>()
 
   // Meeting optimizations
   private qualityManager: QualityTierManager | null = null
@@ -413,7 +414,13 @@ export class CallsProvider {
   }
 
   private async handleAnswerReady(peerId: string, sdp: string): Promise<void> {
-    await this.signaling.sendAnswer(peerId, sdp)
+    const answerPromise = this.signaling.sendAnswer(peerId, sdp)
+    this.pendingAnswers.set(peerId, answerPromise)
+    try {
+      await answerPromise
+    } finally {
+      this.pendingAnswers.delete(peerId)
+    }
   }
 
   private handleIceCandidate(peerId: string, candidate: RTCIceCandidate): void {
@@ -438,6 +445,11 @@ export class CallsProvider {
   }
 
   private async flushIceCandidates(peerId: string): Promise<void> {
+    // Wait for any pending answer to be submitted first — answer and ICE share the same
+    // statement store channel, so the answer must have a higher expiry than ICE candidates.
+    const pending = this.pendingAnswers.get(peerId)
+    if (pending) await pending
+
     const batch = this.pendingCandidates.get(peerId)
     if (!batch || batch.length === 0) return
     this.pendingCandidates.delete(peerId)

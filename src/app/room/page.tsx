@@ -201,7 +201,8 @@ function MeetingRoomContent() {
           requestDevice('Microphone'),
           requestNetwork('turn.cloudflare.com'),
           requestNetwork('stun.cloudflare.com'),
-          requestNetwork('stun.l.google.com')
+          requestNetwork('stun.l.google.com'),
+          requestNetwork('rtc.live.cloudflare.com')
         ])
 
         let stream: MediaStream | null = null

@@ -115,7 +115,7 @@ export class PeerManager {
       return
     }
 
-    const iceServers = this.turnCredentials.getIceServers(forceRelay)
+    const iceServers = await this.turnCredentials.getIceServers(forceRelay)
     const pc = new RTCPeerConnection({
       iceServers,
       iceCandidatePoolSize: 10,
@@ -175,7 +175,7 @@ export class PeerManager {
       this.cleanupPeer(peerId)
     }
 
-    const iceServers = this.turnCredentials.getIceServers(forceRelay)
+    const iceServers = await this.turnCredentials.getIceServers(forceRelay)
     const pc = new RTCPeerConnection({
       iceServers,
       iceCandidatePoolSize: 10,

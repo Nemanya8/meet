@@ -301,14 +301,17 @@ export class SDKTransportClient {
     switch (value.type) {
       case 'presence':
         return `presence/${value.peerId}`
-      case 'offer':
+      case 'offer': {
+        const [first, second] = [value.from, value.to].sort()
+        return `offer/${first}-${second}`
+      }
       case 'answer': {
         const [first, second] = [value.from, value.to].sort()
-        return `handshake/${first}-${second}`
+        return `answer/${first}-${second}`
       }
       case 'ice-candidate': {
         const [first, second] = [value.from, value.to].sort()
-        return `handshake/${first}-${second}`
+        return `ice/${first}-${second}`
       }
       default:
         return null
