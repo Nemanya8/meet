@@ -259,8 +259,8 @@ function MeetingRoomContent() {
           accountId,
           peerId: peerId.current,
           username: displayName,
-          turnKeyId: 'REDACTED_TURN_KEY_ID',
-          turnApiToken: 'REDACTED_TURN_API_TOKEN',
+          turnKeyId: process.env.NEXT_PUBLIC_TURN_KEY_ID,
+          turnApiToken: process.env.NEXT_PUBLIC_TURN_API_TOKEN,
           forceRelay: false,
           onLog: addLog,
           onPeerConnect: (remotePeerId: string) => {
